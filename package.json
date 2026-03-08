@@ -1,0 +1,157 @@
+{
+    "name":  "nova-agent-vscode",
+    "displayName":  "Nova Agent",
+    "description":  "An unofficial VS Code coding assistant inspired by the OpenAI Codex workflow, with streaming chat, workspace context, and local editing tools.",
+    "version":  "0.0.2",
+    "publisher":  "local",
+    "license":  "MIT",
+    "engines":  {
+                    "vscode":  "^1.96.0"
+                },
+    "categories":  [
+                       "Other"
+                   ],
+    "activationEvents":  [
+                             "onView:codexAssistant.chatView",
+                             "onCommand:codexAssistant.focusChat",
+                             "onCommand:codexAssistant.setApiKey",
+                             "onCommand:codexAssistant.configureSettings",
+                             "onCommand:codexAssistant.insertLastResponse",
+                             "onCommand:codexAssistant.insertLastCodeBlock",
+                             "onCommand:codexAssistant.createFileFromLastCodeBlock",
+                             "onCommand:codexAssistant.applyLastCodeBlock",
+                             "onCommand:codexAssistant.runLastShellBlock",
+                             "onCommand:codexAssistant.runLastShellBlockWithCapture",
+                             "onCommand:codexAssistant.applyFileEdits",
+                             "onCommand:codexAssistant.sendSelection"
+                         ],
+    "main":  "./src/extension.js",
+    "contributes":  {
+                        "configuration":  {
+                                              "title":  "Nova Agent",
+                                              "properties":  {
+                                                                 "novaAgent.baseUrl":  {
+                                                                                                "type":  "string",
+                                                                                                "default":  "https://api.openai.com/v1",
+                                                                                                "description":  "Base URL for an OpenAI-compatible API endpoint."
+                                                                                            },
+                                                                 "novaAgent.model":  {
+                                                                                              "type":  "string",
+                                                                                              "default":  "gpt-4.1-mini",
+                                                                                              "description":  "Model name used for chat requests."
+                                                                                          },
+                                                                 "novaAgent.systemPrompt":  {
+                                                                                                     "type":  "string",
+                                                                                                     "default":  "You are Nova Agent, a precise and pragmatic coding assistant inside VS Code. Focus on concrete edits, debugging, architecture tradeoffs, and implementation details.",
+                                                                                                     "description":  "System prompt used for every new request."
+                                                                                                 },
+                                                                 "novaAgent.temperature":  {
+                                                                                                    "type":  "number",
+                                                                                                    "default":  0.2,
+                                                                                                    "minimum":  0,
+                                                                                                    "maximum":  2,
+                                                                                                    "description":  "Sampling temperature passed to the model."
+                                                                                                },
+                                                                 "novaAgent.includeSelectionByDefault":  {
+                                                                                                                  "type":  "boolean",
+                                                                                                                  "default":  false,
+                                                                                                                  "description":  "Include the current editor selection in prompts by default."
+                                                                                                              },
+                                                                 "novaAgent.includeWorkspaceContextByDefault":  {
+                                                                                                                         "type":  "boolean",
+                                                                                                                         "default":  false,
+                                                                                                                         "description":  "Include a compact workspace file summary in prompts by default."
+                                                                                                                     },
+                                                                 "novaAgent.maxWorkspaceFiles":  {
+                                                                                                          "type":  "number",
+                                                                                                          "default":  60,
+                                                                                                          "minimum":  10,
+                                                                                                          "maximum":  500,
+                                                                                                          "description":  "Maximum number of workspace files sampled into prompt context."
+                                                                                                      },
+                                                                 "novaAgent.maxContextFiles":  {
+                                                                                                        "type":  "number",
+                                                                                                        "default":  4,
+                                                                                                        "minimum":  1,
+                                                                                                        "maximum":  12,
+                                                                                                        "description":  "Maximum number of relevant workspace files whose content snippets are attached to a prompt."
+                                                                                                    },
+                                                                 "novaAgent.maxFileContextChars":  {
+                                                                                                            "type":  "number",
+                                                                                                            "default":  1800,
+                                                                                                            "minimum":  200,
+                                                                                                            "maximum":  8000,
+                                                                                                            "description":  "Maximum number of characters sampled from each relevant file."
+                                                                                                        }
+                                                             }
+                                          },
+                        "commands":  [
+                                         {
+                                             "command":  "codexAssistant.focusChat",
+                                             "title":  "Nova Agent: Focus Chat"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.setApiKey",
+                                             "title":  "Nova Agent: Set API Key"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.configureSettings",
+                                             "title":  "Nova Agent: Configure Settings"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.insertLastResponse",
+                                             "title":  "Nova Agent: Insert Last Response"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.insertLastCodeBlock",
+                                             "title":  "Nova Agent: Insert Last Code Block"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.createFileFromLastCodeBlock",
+                                             "title":  "Nova Agent: Create File From Last Code Block"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.applyLastCodeBlock",
+                                             "title":  "Nova Agent: Apply Last Code Block"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.runLastShellBlock",
+                                             "title":  "Nova Agent: Run Last Shell Block"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.runLastShellBlockWithCapture",
+                                             "title":  "Nova Agent: Run Last Shell Block With Capture"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.applyFileEdits",
+                                             "title":  "Nova Agent: Apply File Edits"
+                                         },
+                                         {
+                                             "command":  "codexAssistant.sendSelection",
+                                             "title":  "Nova Agent: Ask About Selection"
+                                         }
+                                     ],
+                        "viewsContainers":  {
+                                                "activitybar":  [
+                                                                    {
+                                                                        "id":  "codexAssistant",
+                                                                        "title":  "Nova",
+                                                                        "icon":  "media/codex.svg"
+                                                                    }
+                                                                ]
+                                            },
+                        "views":  {
+                                      "codexAssistant":  [
+                                                             {
+                                                                 "type":  "webview",
+                                                                 "id":  "codexAssistant.chatView",
+                                                                 "name":  "Assistant"
+                                                             }
+                                                         ]
+                                  }
+                    },
+    "scripts":  {
+                    "lint":  "echo \"No linter configured\"",
+                    "package":  "vsce package"
+                }
+}
